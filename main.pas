@@ -53,7 +53,7 @@ end;
 function LoadCueFile(const FileName: string): TStringList;
 begin
   Result := TStringList.Create();
-  Result.LoadFromFile(FileName);
+  Result.LoadFromFile(UTF8ToSys(FileName));
 end;
 
 function GetFileLineIndex(const Cue: TStringList): Integer;
@@ -76,7 +76,7 @@ var
   LineIndex: Integer;
 begin
   LineIndex := GetFileLineIndex(Cue);
-  if LineIndex = -1 then Result := '' else Result := Cue.Strings[LineIndex];
+  if LineIndex = -1 then Result := '' else Result := SysToUTF8(Cue.Strings[LineIndex]);
 end;
 
 function ExtractWavFileName(const Line: string): string;
@@ -94,7 +94,7 @@ begin
     AProcess := TProcess.Create(nil);
     AProcess.Executable:= FlacExe;
     AProcess.Parameters.Add('-8');
-    AProcess.Parameters.Add(FileName);
+    AProcess.Parameters.Add(UTF8ToSys(FileName));
     AProcess.Options := AProcess.Options + [poWaitOnExit];
     AProcess.ShowWindow := swoMinimize;
     AProcess.Execute;
@@ -114,7 +114,7 @@ var
 begin
   LineIndex := GetFileLineIndex(Cue);
   Cue.Strings[LineIndex] := ChangeFileLineExtToFlac(Cue.Strings[LineIndex]);
-  Cue.SaveToFile(FilePath);
+  Cue.SaveToFile(UTF8ToSys(FilePath));
 end;
 
 procedure RestorCueTimestamp(const CueFilePath: string);
@@ -128,12 +128,12 @@ begin
   try
     Line := ExtractFileLine(Cue);
     if Line = '' then Exit;
-    Log('Line: %s', [SysToUTF8(Line)]);
+    Log('Line: %s', [Line]);
     WaveFileName := ExtractWavFileName(Line);
-    Log('WaveFileName: %s', [SysToUTF8(WaveFileName)]);
+    Log('WaveFileName: %s', [WaveFileName]);
     WaveFilePath := ExtractFilePath(CueFilePath) + WaveFileName;
-    Log('CueFile: %s, WaveFile: %s', [SysToUTF8(CueFilePath), SysToUTF8(WaveFilePath)]);
-    FileSetDate(CueFilePath, FileAge(WaveFilePath));
+    Log('CueFile: %s, WaveFile: %s', [CueFilePath, WaveFilePath]);
+    FileSetDateUTF8(CueFilePath, FileAgeUTF8(WaveFilePath));
   finally
     Cue.Free;
   end;
@@ -157,13 +157,13 @@ begin
     WavFileName := ExtractWavFileName(Line);
     if not IsWavFile(WavFileName) then Exit;
     WaveFilePath := ExtractFilePath(CueFilePath) + WavFileName;
-    WaveFileSize := FileSize(SysToUTF8(WaveFilePath));
-    Log('InFile: %s (%s bytes)', [SysToUTF8(WavFileName), FormatFloat('#,', WaveFileSize)]);
+    WaveFileSize := FileSize(WaveFilePath);
+    Log('InFile: %s (%s bytes)', [WavFileName, FormatFloat('#,', WaveFileSize)]);
     EncodeWavFile(WaveFilePath);
     FlacFileName := ChangeFileExt(WavFileName, '.flac');
     FlacFilePath := ExtractFilePath(CueFilePath) + FlacFileName;
-    FlacFileSize := FileSize(SysToUTF8(FlacFilePath));
-    Log('OutFile: %s (%s bytes / %.1f%%)', [SysToUTF8(FlacFileName), FormatFloat('#,', FlacFileSize), FlacFileSize / WaveFileSize * 100]);
+    FlacFileSize := FileSize(FlacFilePath);
+    Log('OutFile: %s (%s bytes / %.1f%%)', [FlacFileName, FormatFloat('#,', FlacFileSize), FlacFileSize / WaveFileSize * 100]);
     SaveCueFile(Cue, CueFilePath);
   finally
     Cue.Free;
@@ -178,7 +178,7 @@ var
 begin
   for I := 0 to Length(FileNames) -1 do
   begin
-    TargetFile := UTF8ToSys(FileNames[I]);
+    TargetFile := FileNames[I];
     if IsCueFile(TargetFile) then
     begin
       ChangeWavToFlac(TargetFile);
