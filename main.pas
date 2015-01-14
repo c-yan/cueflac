@@ -35,6 +35,11 @@ implementation
 
 { TForm1 }
 
+procedure Log(const Fmt: string; const Args: array of const);
+begin
+  Form1.Memo1.Lines.Add(Format(Fmt, Args));
+end;
+
 function IsWavFile(const FileName: string): Boolean;
 begin
   Result := LowerCase(ExtractFileExt(FileName)) = '.wav';
@@ -125,11 +130,11 @@ begin
   try
     Line := ExtractFileLine(Cue);
     if Line = '' then Exit;
-    Form1.Memo1.Lines.Add(Format('Line: %s', [SysToUTF8(Line)]));
+    Log('Line: %s', [SysToUTF8(Line)]);
     WaveFileName := ExtractWavFileName(Line);
-    Form1.Memo1.Lines.Add(Format('WaveFileName: %s', [SysToUTF8(WaveFileName)]));
+    Log('WaveFileName: %s', [SysToUTF8(WaveFileName)]);
     WaveFilePath := ExtractFilePath(CueFilePath) + WaveFileName;
-    Form1.Memo1.Lines.Add(Format('CueFile: %s, WaveFile: %s', [SysToUTF8(CueFilePath), SysToUTF8(WaveFilePath)]));
+    Log('CueFile: %s, WaveFile: %s', [SysToUTF8(CueFilePath), SysToUTF8(WaveFilePath)]);
     FileSetDate(CueFilePath, FileAge(WaveFilePath));
   finally
     Cue.Free;
@@ -155,12 +160,12 @@ begin
     if not IsWavFile(WavFileName) then Exit;
     WaveFilePath := ExtractFilePath(CueFilePath) + WavFileName;
     WaveFileSize := FileSize(SysToUTF8(WaveFilePath));
-    Form1.Memo1.Lines.Add(Format('InFile: %s (%s bytes)', [SysToUTF8(WavFileName), FormatFloat('#,', WaveFileSize)]));
+    Log('InFile: %s (%s bytes)', [SysToUTF8(WavFileName), FormatFloat('#,', WaveFileSize)]);
     EncodeWavFile(WaveFilePath);
     FlacFileName := ChangeFileExt(WavFileName, '.flac');
     FlacFilePath := ExtractFilePath(CueFilePath) + FlacFileName;
     FlacFileSize := FileSize(SysToUTF8(FlacFilePath));
-    Form1.Memo1.Lines.Add(Format('OutFile: %s (%s bytes / %.1f%%)', [SysToUTF8(FlacFileName), FormatFloat('#,', FlacFileSize), FlacFileSize / WaveFileSize * 100]));
+    Log('OutFile: %s (%s bytes / %.1f%%)', [SysToUTF8(FlacFileName), FormatFloat('#,', FlacFileSize), FlacFileSize / WaveFileSize * 100]);
     SaveCueFile(Cue, CueFilePath);
   finally
     Cue.Free;
