@@ -1,0 +1,39 @@
+object Form1: TForm1
+  Left = 486
+  Height = 240
+  Top = 256
+  Width = 320
+  AllowDropFiles = True
+  Caption = 'CueFLAC'
+  ClientHeight = 221
+  ClientWidth = 320
+  Menu = MainMenu1
+  OnDropFiles = FormDropFiles
+  LCLVersion = '1.2.6.0'
+  object Memo1: TMemo
+    Left = 0
+    Height = 201
+    Top = 0
+    Width = 320
+    Align = alClient
+    TabOrder = 0
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Height = 20
+    Top = 201
+    Width = 320
+    Panels = <>
+  end
+  object MainMenu1: TMainMenu
+    left = 257
+    top = 101
+    object MenuItem1: TMenuItem
+      Caption = '&File'
+      object MenuItem2: TMenuItem
+        Caption = 'E&xit'
+        OnClick = MenuItem2Click
+      end
+    end
+  end
+end
