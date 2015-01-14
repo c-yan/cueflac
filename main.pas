@@ -90,8 +90,6 @@ var
   AProcess: TProcess;
 begin
   FlacExe := ExtractFilePath(Application.ExeName) + 'flac.exe';
-  //ExecuteProcess(FlacExe, ['-8', FileName])
-
   try
     AProcess := TProcess.Create(nil);
     AProcess.Executable:= FlacExe;
