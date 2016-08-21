@@ -158,6 +158,7 @@ begin
     if not IsWavFile(WavFileName) then Exit;
     WaveFilePath := ExtractFilePath(CueFilePath) + WavFileName;
     WaveFileSize := FileSize(WaveFilePath);
+    if WaveFileSize = -1 then Exit;
     Log('InFile: %s (%s bytes)', [WavFileName, FormatFloat('#,', WaveFileSize)]);
     EncodeWavFile(WaveFilePath);
     FlacFileName := ChangeFileExt(WavFileName, '.flac');
