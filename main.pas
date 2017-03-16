@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  ComCtrls, Menus, StrUtils, Process;
+  ComCtrls, Menus, StrUtils, Process, LazUTF8;
 
 type
 
@@ -53,7 +53,7 @@ end;
 function LoadCueFile(const FileName: string): TStringList;
 begin
   Result := TStringList.Create();
-  Result.LoadFromFile(UTF8ToSys(FileName));
+  Result.LoadFromFile(FileName);
 end;
 
 function GetFileLineIndex(const Cue: TStringList): Integer;
@@ -76,7 +76,7 @@ var
   LineIndex: Integer;
 begin
   LineIndex := GetFileLineIndex(Cue);
-  if LineIndex = -1 then Result := '' else Result := SysToUTF8(Cue.Strings[LineIndex]);
+  if LineIndex = -1 then Result := '' else Result := WinCPToUTF8(Cue.Strings[LineIndex]);
 end;
 
 function ExtractWavFileName(const Line: string): string;
@@ -94,7 +94,7 @@ begin
     AProcess := TProcess.Create(nil);
     AProcess.Executable:= FlacExe;
     AProcess.Parameters.Add('-8');
-    AProcess.Parameters.Add(UTF8ToSys(FileName));
+    AProcess.Parameters.Add(UTF8ToWinCP(FileName));
     AProcess.Options := AProcess.Options + [poWaitOnExit];
     AProcess.ShowWindow := swoMinimize;
     AProcess.Execute;
@@ -114,7 +114,7 @@ var
 begin
   LineIndex := GetFileLineIndex(Cue);
   Cue.Strings[LineIndex] := ChangeFileLineExtToFlac(Cue.Strings[LineIndex]);
-  Cue.SaveToFile(UTF8ToSys(FilePath));
+  Cue.SaveToFile(FilePath);
 end;
 
 procedure RestorCueTimestamp(const CueFilePath: string);
@@ -133,7 +133,7 @@ begin
     Log('WaveFileName: %s', [WaveFileName]);
     WaveFilePath := ExtractFilePath(CueFilePath) + WaveFileName;
     Log('CueFile: %s, WaveFile: %s', [CueFilePath, WaveFilePath]);
-    FileSetDateUTF8(CueFilePath, FileAgeUTF8(WaveFilePath));
+    FileSetDate(CueFilePath, FileAge(WaveFilePath));
   finally
     Cue.Free;
   end;
