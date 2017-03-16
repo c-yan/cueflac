@@ -165,6 +165,7 @@ begin
     FlacFilePath := ExtractFilePath(CueFilePath) + FlacFileName;
     FlacFileSize := FileSize(FlacFilePath);
     Log('OutFile: %s (%s bytes / %.1f%%)', [FlacFileName, FormatFloat('#,', FlacFileSize), FlacFileSize / WaveFileSize * 100]);
+    if FlacFileSize = -1 then Exit;
     SaveCueFile(Cue, CueFilePath);
   finally
     Cue.Free;
