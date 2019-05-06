@@ -60,7 +60,7 @@ function GetFileLineIndex(const Cue: TStringList): Integer;
 var
   I: Integer;
 begin
-  I := -1;
+  Result := -1;
   for I := 0 to Cue.Count - 1 do
   begin
     if Pos('FILE', Cue.Strings[I]) = 1 then
