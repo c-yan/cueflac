@@ -117,7 +117,7 @@ begin
   Cue.SaveToFile(FilePath);
 end;
 
-procedure RestorCueTimestamp(const CueFilePath: string);
+procedure RestoreCueTimestamp(const CueFilePath: string);
 var
   Line: string;
   Cue: TStringList;
@@ -184,7 +184,7 @@ begin
     if IsCueFile(TargetFile) then
     begin
       ChangeWavToFlac(TargetFile);
-      RestorCueTimestamp(TargetFile);
+      RestoreCueTimestamp(TargetFile);
     end;
   end;
 end;
